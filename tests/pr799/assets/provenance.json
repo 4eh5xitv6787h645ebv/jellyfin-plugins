@@ -4,15 +4,21 @@
   "manifestCommit": "6ca611fad0e0051f842db5bb5a387e26f96b4924",
   "pluginVersion": "12.5.0.0",
   "sdk": "10.0.108",
-  "source": "https://github.com/4eh5xitv6787h645ebv/Jellyfin-Enhanced/tree/70f25ce8ad77c876cc39318d6ee98639ae9e3702",
+  "source": "https://github.com/4eh5xitv6787h645ebv/Jellyfin-Enhanced/tree/4d1084faa0846f5dc25d728e69e7a61cbb1c323d",
   "assets": {
     "Jellyfin.Plugin.JellyfinEnhanced_10.11.0.zip": {
-      "sha256": "58ab1c4a0cf005a0f0077f788cbfb273b3d795cfb1b58e8894ff3e704b1002e1",
-      "md5": "f2629c8cb03c8079928e7cd5d7c76fe8"
+      "sha256": "822e0e88004d1abf6b8f83f089ddcce8ac2ed2c9e298be96f5b0e5937bbe0ce1",
+      "md5": "69ee1e49c1c5c68d3d341973a0b3847e"
     },
     "Jellyfin.Plugin.JellyfinEnhanced_12.0.0.zip": {
-      "sha256": "769524d505908809c92359f6c0d1985f313937a2e747024ab56bbb8dcb9c846a",
-      "md5": "efd004f0cacb3057ffc6d4989110ca86"
+      "sha256": "0e2a42feea48d701548e61d1b1235f3b027efa734fb8df61287254157d9bed47",
+      "md5": "246b26b2ffd6b2297d9150cb9a391cda"
     }
-  }
+  },
+  "sourceCommit": "4d1084faa0846f5dc25d728e69e7a61cbb1c323d",
+  "features": [
+    "deduplicate revision history for all plugins",
+    "build/host diagnostic endpoint and logs",
+    "no configuration-page mismatch banner"
+  ]
 }
