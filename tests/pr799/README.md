@@ -1,4 +1,4 @@
-# Try the unified manifest and host compatibility guard
+# Try the unified manifest, tidy revision history and compatibility diagnostics
 
 This test combines Jellyfin-Enhanced PRs [#799](https://github.com/n00bcodr/Jellyfin-Enhanced/pull/799) and [#800](https://github.com/n00bcodr/Jellyfin-Enhanced/pull/800), and jellyfin-plugins [#2](https://github.com/n00bcodr/jellyfin-plugins/pull/2). Nothing needs merging first.
 
@@ -8,15 +8,15 @@ Use this repository URL in a disposable Jellyfin 12 or 10.11 server:
 https://raw.githubusercontent.com/4eh5xitv6787h645ebv/jellyfin-plugins/test/pr799-unified-manifest/tests/pr799/manifest.json
 ```
 
-The catalog is the proposed unified manifest. Only the two Enhanced `12.5.0.0` ZIP URLs/checksums and their changelog prefixes differ: they point to test builds that include the #799 guard. The ZIP URLs are pinned to a commit. This avoids pretending that the already published releases contain the new guard. Older revisions retain the original release assets.
+The catalog is the proposed unified manifest. Only the two Enhanced `12.5.0.0` ZIP URLs/checksums and their changelog prefixes differ: they point to the updated #799 test builds, including revision deduplication and compatibility diagnostics, with the red mismatch banner removed. The ZIP URLs are pinned to a commit. Older revisions retain the original release assets. If you previously installed this test version, uninstall it, restart, reinstall from the same URL, restart and hard-refresh the browser to replace the earlier `12.5.0.0` test DLL and cached scripts.
 
 ## Quick test on Jellyfin 12
 
 1. Use a fresh test server. Under **Dashboard → Plugins → Manage Repositories**, add the URL above. If reusing a test server, disable other repositories providing Jellyfin Enhanced first: a stale repository can win the same-version tie. Remove any existing Enhanced installation and restart before testing this build.
 2. Refresh the Plugins page. **Jellyfin Enhanced appears as one card**, including while it is not installed.
-3. Open that card and expand **Revision History**. There are two `12.5.0.0` entries. One targets 12 and the other 10.11.
+3. Before Enhanced is installed, open that card and expand **Revision History**. There are two `12.5.0.0` entries. One targets 12 and the other 10.11; the client-side deduplication cannot run until Enhanced is active.
 4. Expand the **second `12.5.0.0` entry**, labelled as the jf10/10.11 test build. Click its **Install** button and confirm, then restart Jellyfin.
-5. Run the checker below. Expected: `builtFor: jf12`, `hostTarget: jf12`, `mismatch: false`, then **PASS**. The configuration page should have no wrong-build warning.
+5. Hard-refresh the browser. Revision History now has **one visible entry per version**. Run the checker below: expected `builtFor: jf12`, `hostTarget: jf12`, `mismatch: false`, then **PASS**. The API still contains both rows; only the displayed list is deduplicated. The configuration page has no wrong-build banner.
 6. To compare the first entry, uninstall Enhanced, restart, then repeat with the **first `12.5.0.0` entry**. It also loads `jf12`. Default Install should do the same.
 
 ```sh
@@ -26,6 +26,10 @@ python3 verify.py --server http://localhost:8096 --username admin
 Download `verify.py` from this directory first. It uses only Python's standard library and prompts for the password without printing or saving it. It logs in as the administrator and reads the catalog and guard endpoint; it does not install or change plugins.
 
 The reason both clicks resolve identically: the web client sends the **plugin version string and repository URL**, not `targetAbi` or the selected ZIP. Within this manifest both rows share those request values. Jellyfin resolves to the first compatible row, and jf12 is ordered first.
+
+## Check other plugins
+
+While Enhanced is active, open JavaScript Injector's Revision History: repeated versions should appear once there too. For another independent example, add Ani-Sync's official repository (`https://raw.githubusercontent.com/vosmiic/jellyfin-ani-sync/master/manifest.json`) and inspect its history; the repeated `2.1.0.0` entries become one visible entry. Neither other plugin needs installing. Navigate between plugin pages and expand revisions to confirm that their original install buttons still work. The feature preserves the first entry in the catalog's order and hides later duplicates without changing server responses or handlers.
 
 ## Jellyfin 10.11 comparison
 
@@ -41,11 +45,11 @@ https://raw.githubusercontent.com/4eh5xitv6787h645ebv/jellyfin-plugins/test/pr79
 
 still selects jf12 on Jellyfin 12. These are test URLs; the actual existing n00bcodr URLs do not change until the PRs are merged/published.
 
-## Optional warning test
+## Optional diagnostic test
 
 On the disposable Jellyfin 12 server, first install the correct test build above. Stop Jellyfin, replace only its installed `Jellyfin.Plugin.JellyfinEnhanced.dll` with the DLL from `assets/Jellyfin.Plugin.JellyfinEnhanced_10.11.0.zip`, and start it again. The matching ZIP is linked in this directory; this intentionally bypasses catalog selection.
 
-Open Enhanced's configuration page: the red **Wrong build for this Jellyfin version** banner should appear. The logs contain `BUILD/HOST MISMATCH`.
+The logs contain `BUILD/HOST MISMATCH`. The red configuration-page banner has been removed; the endpoint and logging remain available for diagnostics.
 
 ```sh
 python3 verify.py --server http://localhost:8096 --username admin --expect-mismatch
@@ -68,4 +72,6 @@ dotnet build Jellyfin.Plugin.JellyfinEnhanced/JellyfinEnhanced.csproj -c Release
 dotnet build Jellyfin.Plugin.JellyfinEnhanced/JellyfinEnhanced.csproj -c Release -p:JellyfinTarget=jf10 -o out/jf10
 ```
 
-Both builds passed with zero warnings/errors. Local tests on Jellyfin 12 RC6 verified default installation, identical requests and DLL hashes from both `12.4.1.0` revision buttons in the exact original PR manifest, the older-version exception, and the guard endpoint/banner in both matching and mismatching states. The current upstream source hash check in the original PR has drifted for two Jellyfin master files; those pins were not changed by this test bundle. Automatic updates and future Jellyfin releases are not covered by those local results.
+Both builds passed with zero warnings/errors. The updated plugin was tested on Jellyfin 12 RC6 and 10.11.11 with the standalone preview removed: Enhanced, Ani-Sync and JavaScript Injector each show one entry per version; navigation, repeated initialization without subscriber growth, preserved intercepted install parameters, teardown, and banner removal pass without browser page errors. The matching diagnostics endpoint reports the correct build on both servers. Browser regression scripts are kept local rather than included in the PR.
+
+Earlier tests on the original manifest verified default installation, identical requests and DLL hashes from both `12.4.1.0` revision buttons, and the older-version exception. The current upstream source hash check in the original manifest PR has drifted for two Jellyfin master files; those pins were not changed by this test bundle. Automatic updates and future Jellyfin releases are not covered by these results.
