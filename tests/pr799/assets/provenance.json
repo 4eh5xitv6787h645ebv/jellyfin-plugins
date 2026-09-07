@@ -1,0 +1,18 @@
+{
+  "guardCommit": "70f25ce8ad77c876cc39318d6ee98639ae9e3702",
+  "docsCommit": "2c64e059da4da6d9ad349fd97a7f81ae0db0988e",
+  "manifestCommit": "6ca611fad0e0051f842db5bb5a387e26f96b4924",
+  "pluginVersion": "12.5.0.0",
+  "sdk": "10.0.108",
+  "source": "https://github.com/4eh5xitv6787h645ebv/Jellyfin-Enhanced/tree/70f25ce8ad77c876cc39318d6ee98639ae9e3702",
+  "assets": {
+    "Jellyfin.Plugin.JellyfinEnhanced_10.11.0.zip": {
+      "sha256": "58ab1c4a0cf005a0f0077f788cbfb273b3d795cfb1b58e8894ff3e704b1002e1",
+      "md5": "f2629c8cb03c8079928e7cd5d7c76fe8"
+    },
+    "Jellyfin.Plugin.JellyfinEnhanced_12.0.0.zip": {
+      "sha256": "769524d505908809c92359f6c0d1985f313937a2e747024ab56bbb8dcb9c846a",
+      "md5": "efd004f0cacb3057ffc6d4989110ca86"
+    }
+  }
+}
